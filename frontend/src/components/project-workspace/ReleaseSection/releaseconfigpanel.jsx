@@ -42,12 +42,12 @@ const ReleaseConfigPanel = ({ onGenerate, onPreview, transformations = [], selec
               testCount += data.split_counts.test || 0;
             } else {
               // Fallback: try to get split information from images
-              const splitRes = await fetch(`http://localhost:12000/api/v1/datasets/${ds.id}/splits`);
+              const splitRes = await fetch(`http://localhost:12000/api/v1/datasets/${ds.id}/split-stats`);
               if (splitRes.ok) {
                 const splitData = await splitRes.json();
-                trainCount += splitData.train_count || 0;
-                valCount += splitData.validation_count || 0;
-                testCount += splitData.test_count || 0;
+                trainCount += splitData.train || 0;
+                valCount += splitData.val || 0;
+                testCount += splitData.test || 0;
               } else {
                 // If no split info available, estimate based on total images
                 const totalImages = data.total_images || 0;
