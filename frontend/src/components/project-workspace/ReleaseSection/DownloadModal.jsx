@@ -143,7 +143,12 @@ const DownloadModal = ({
                   </span>
                   <span className="stat-item">
                     <span className="stat-icon">🖼️</span>
-                    Images: {release?.final_image_count || 'N/A'}
+                    Images: {release?.final_image_count || 
+                             (release?.original_image_count && release?.augmented_image_count ? 
+                              release.original_image_count + release.augmented_image_count : 
+                              release?.total_original_images && release?.total_augmented_images ?
+                              release.total_original_images + release.total_augmented_images :
+                              'N/A')}
                   </span>
                   <span className="stat-item">
                     <span className="stat-icon">📅</span>

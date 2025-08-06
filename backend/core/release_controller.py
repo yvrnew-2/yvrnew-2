@@ -8,6 +8,8 @@ import json
 import logging
 import uuid
 import shutil
+import zipfile
+import tempfile
 from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
 from datetime import datetime
@@ -759,9 +761,6 @@ class ReleaseController:
         """
         Create export files using the export system
         """
-        import tempfile
-        import zipfile
-        import shutil
         
         # Create temporary directory for export
         temp_dir = tempfile.mkdtemp(prefix=f"release_{release_id}_")
@@ -1038,7 +1037,9 @@ class ReleaseController:
             project_name = project.name if project else f"project_{config.project_id}"
             
             # Create project-specific releases directory
-            releases_dir = os.path.join("projects", project_name, "releases")
+            # Use absolute path to projects directory (one level up from backend)
+            projects_root = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projects")
+            releases_dir = os.path.join(projects_root, project_name, "releases")
             os.makedirs(releases_dir, exist_ok=True)
             
             zip_filename = f"{release.name.replace(' ', '_')}_{config.export_format}.zip"
