@@ -104,11 +104,11 @@ class ReleaseController:
             raise
     
     def load_pending_transformations(self, release_version: str) -> List[Dict[str, Any]]:
-        """Load pending transformations from database"""
+        """Load completed transformations from database for release generation"""
         try:
             transformations = self.db.query(ImageTransformation).filter(
                 ImageTransformation.release_version == release_version,
-                ImageTransformation.status == "PENDING",
+                ImageTransformation.status == "COMPLETED",
                 ImageTransformation.is_enabled == True
             ).order_by(ImageTransformation.order_index).all()
             
@@ -125,7 +125,7 @@ class ReleaseController:
                 }
                 transformation_records.append(record)
             
-            logger.info(f"Loaded {len(transformation_records)} pending transformations for version {release_version}")
+            logger.info(f"Loaded {len(transformation_records)} completed transformations for version {release_version}")
             return transformation_records
             
         except Exception as e:
@@ -310,10 +310,10 @@ class ReleaseController:
                 started_at=datetime.utcnow()
             )
             
-            # Load pending transformations
+            # Load completed transformations
             transformation_records = self.load_pending_transformations(release_version)
             if not transformation_records:
-                raise ValueError(f"No pending transformations found for version {release_version}")
+                raise ValueError(f"No completed transformations found for version {release_version}")
             
             # Get dataset images with split section filtering
             image_records = self.get_dataset_images(config.dataset_ids, config.split_sections)
